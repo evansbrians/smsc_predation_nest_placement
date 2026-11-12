@@ -28,6 +28,10 @@ gps_points <-
     latitude
   )
 
+# Silent reading and messaging:
+
+local_gs4_quiet()
+
 # predator cameras --------------------------------------------------------
 
 # Camera locations:
@@ -184,12 +188,13 @@ camera_data <-
           .before = 1
         ) %>% 
         
-        # Remove rows that haven't yet been observed:
-        
+        # Remove photos not yet entered:
+
         filter(
-          !cumall(
-            is.na(species_1)
-          )
+          !is.na(species_1) %>%
+            rev() %>%
+            cumall() %>%
+            rev()
         )
     }
   ) %>% 
@@ -203,7 +208,7 @@ camera_data <-
   
   pivot_longer(
     matches("^(species|count)_\\d$"),
-    names_to = c(".value", NA),
+    names_to = c(".value", "slot"),
     names_sep = "_"
   ) %>% 
   relocate(
@@ -211,8 +216,11 @@ camera_data <-
     .after = last_col()
   ) %>% 
   
-  # Remove the blank rows:
+  # Remove empty second-species rows:
   
-  drop_na(species)
+  filter(
+    !is.na(species) | slot == "1"
+  ) %>%
+  select(!slot)
   
 
