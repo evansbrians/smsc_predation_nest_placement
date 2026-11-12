@@ -19,7 +19,7 @@ gs4_auth(
 
 # Read in and pre-process the data:
 
-source("scripts/read_nest_camera_data.R")
+source("src/read_nest_camera_data.R")
 
 # Define predators:
 
